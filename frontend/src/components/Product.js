@@ -2,10 +2,11 @@ import React from 'react'
 import { Card } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import Rating from './Rating'
+import '../index.css'
 
 const Product = ({ product }) => {
 	return (
-		<Card className='my-3 p-3 rounded'>
+		<Card className='my-3 p-3 '>
 			<Link to={`/product/${product._id}`}>
 				<Card.Img src={product.image} />
 			</Link>
@@ -27,7 +28,7 @@ const Product = ({ product }) => {
 					</div>
 				</Card.Text>
 
-				<Card.Text as='h3'>₹{product.price}</Card.Text>
+				<Card.Text as='h4'>₹{product.price}</Card.Text>
 			</Card.Body>
 		</Card>
 	)

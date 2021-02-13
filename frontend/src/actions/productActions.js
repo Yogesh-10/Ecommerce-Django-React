@@ -15,6 +15,9 @@ import {
 	PRODUCT_LIST_FAIL,
 	PRODUCT_LIST_REQUEST,
 	PRODUCT_LIST_SUCCESS,
+	PRODUCT_TOP_FAIL,
+	PRODUCT_TOP_REQUEST,
+	PRODUCT_TOP_SUCCESS,
 	PRODUCT_UPDATE_FAIL,
 	PRODUCT_UPDATE_REQUEST,
 	PRODUCT_UPDATE_SUCCESS,
@@ -211,6 +214,28 @@ export const createProductReview = (productId, review) => async (
 		dispatch({
 			type: PRODUCT_CREATE_REVIEW_FAIL,
 			payload: message,
+		})
+	}
+}
+
+export const listTopProducts = () => async (dispatch) => {
+	try {
+		dispatch({ type: PRODUCT_TOP_REQUEST })
+
+		// data is the whole object sent to the route and destructed here to fetch and use on our frontend
+		const { data } = await axios.get(`/api/products/top`)
+
+		dispatch({
+			type: PRODUCT_TOP_SUCCESS,
+			payload: data,
+		})
+	} catch (error) {
+		dispatch({
+			type: PRODUCT_TOP_FAIL,
+			payload:
+				error.response && error.response.data.detail
+					? error.response.data.detail
+					: error.message,
 		})
 	}
 }
