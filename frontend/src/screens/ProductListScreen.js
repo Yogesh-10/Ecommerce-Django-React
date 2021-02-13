@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { LinkContainer } from 'react-router-bootstrap'
 import Loader from '../components/Loader'
 import Message from '../components/Message'
-// import Paginate from '../components/Paginate'
 import {
 	createProduct,
 	deleteProduct,
