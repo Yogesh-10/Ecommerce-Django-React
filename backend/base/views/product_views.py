@@ -44,6 +44,13 @@ def getProduct(request, pk):
     serializer = ProductSerializer(product, many=False)
     return Response(serializer.data)
 
+# get top rated products to display in carousel
+@api_view(['GET'])
+def getTopProducts(request):
+    products = Product.objects.filter(rating__gte=4).order_by('-rating')[0:4]
+    serializer = ProductSerializer(products, many=True)
+    return Response(serializer.data)
+
 # create a product
 @api_view(['POST'])
 @permission_classes([IsAdminUser])
