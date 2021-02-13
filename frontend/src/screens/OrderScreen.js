@@ -5,8 +5,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getOrderDetails, payOrder } from '../actions/orderActions'
-import { ORDER_PAY_RESET } from '../constants/orderConstants'
+import {
+	deliverOrder,
+	getOrderDetails,
+	payOrder,
+} from '../actions/orderActions'
+import {
+	ORDER_PAY_RESET,
+	ORDER_DELIVER_RESET,
+} from '../constants/orderConstants'
 
 const OrderScreen = ({ match, history }) => {
 	const orderId = match.params.id
@@ -20,6 +27,12 @@ const OrderScreen = ({ match, history }) => {
 
 	const orderPay = useSelector((state) => state.orderPay)
 	const { loading: loadingPay, success: successPay } = orderPay //renaming loading to loadingpay because we already have loading above for orderDetails
+
+	const orderDeliver = useSelector((state) => state.orderDeliver)
+	const { loading: loadingDeliver, success: successDeliver } = orderDeliver
+
+	const userLogin = useSelector((state) => state.userLogin)
+	const { userInfo } = userLogin
 
 	if (!loading && !error) {
 		order.itemsPrice = order.orderItems
@@ -43,8 +56,18 @@ const OrderScreen = ({ match, history }) => {
 	}
 
 	useEffect(() => {
-		if (!order || successPay || order._id !== Number(orderId)) {
+		if (!userInfo) {
+			history.push('/login')
+		}
+
+		if (
+			!order ||
+			successPay ||
+			order._id !== Number(orderId) ||
+			successDeliver
+		) {
 			dispatch({ type: ORDER_PAY_RESET }) // adding this because to stop refreshing page after pay, else the page keeps on refreshing after pay
+			dispatch({ type: ORDER_DELIVER_RESET })
 			dispatch(getOrderDetails(orderId))
 		} else if (!order.isPaid) {
 			if (!window.paypal) {
@@ -53,10 +76,14 @@ const OrderScreen = ({ match, history }) => {
 				setSdkReady(true)
 			}
 		}
-	}, [dispatch, order, orderId, successPay])
+	}, [dispatch, order, orderId, successPay, successDeliver])
 
 	const successPaymentHandler = (paymentResult) => {
 		dispatch(payOrder(orderId, paymentResult))
+	}
+
+	const deliverHandler = () => {
+		dispatch(deliverOrder(order))
 	}
 
 	return loading ? (
@@ -190,7 +217,8 @@ const OrderScreen = ({ match, history }) => {
 									)}
 								</ListGroup.Item>
 							)}
-							{/* {loadingDeliver && <Loader />}
+
+							{loadingDeliver && <Loader />}
 							{userInfo &&
 								userInfo.isAdmin &&
 								order.isPaid &&
@@ -204,7 +232,7 @@ const OrderScreen = ({ match, history }) => {
 											Mark as delivered
 										</Button>
 									</ListGroup.Item>
-								)} */}
+								)}
 						</ListGroup>
 					</Card>
 				</Col>
