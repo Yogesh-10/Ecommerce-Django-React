@@ -11,9 +11,10 @@ import {
 } from '../actions/productActions'
 import { Button, Col, Row, Table } from 'react-bootstrap'
 import { PRODUCT_CREATE_RESET } from '../constants/productConstants'
+import Paginate from '../components/Paginate'
 
-const ProductListScreen = ({ history, match }) => {
-	//   const pageNumber = match.params.pageNumber || 1
+const ProductListScreen = ({ history }) => {
+	const pageNumber = history.location.search
 
 	const dispatch = useDispatch()
 
@@ -47,7 +48,7 @@ const ProductListScreen = ({ history, match }) => {
 		if (successCreate) {
 			history.push(`/admin/product/${createdProduct._id}/edit`)
 		} else {
-			dispatch(listProducts()) //first paramter is keyword in productAction so we dont keyword for admin products so empty string is passed
+			dispatch(listProducts(pageNumber)) //first paramter is keyword in productAction so we dont keyword for admin products so empty string is passed
 		}
 	}, [
 		dispatch,
@@ -56,6 +57,7 @@ const ProductListScreen = ({ history, match }) => {
 		successDelete,
 		successCreate,
 		createdProduct,
+		pageNumber,
 	])
 
 	const deleteHandler = (id) => {
@@ -130,7 +132,8 @@ const ProductListScreen = ({ history, match }) => {
 							))}
 						</tbody>
 					</Table>
-					{/* <Paginate pages={pages} page={page} isAdmin={true} /> */}
+
+					<Paginate pages={pages} page={page} isAdmin={true} />
 				</>
 			)}
 		</>

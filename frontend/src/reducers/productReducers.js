@@ -33,7 +33,10 @@ export const productListReducer = (state = { products: [] }, action) => {
 		case PRODUCT_LIST_SUCCESS:
 			return {
 				loading: false,
-				products: action.payload,
+				products: action.payload.products, // action.payload.products because in backend in getProducts we sent response with the name products
+				page: action.payload.page,
+				pages: action.payload.pages,
+				//all above values comes from backend in getProducts response
 			}
 		case PRODUCT_LIST_FAIL:
 			return {
